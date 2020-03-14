@@ -861,14 +861,6 @@ class Spotify(object):
         else:
             return results
 
-    def audio_analysis(self, id):
-        ''' Get audio analysis for a track based upon its Spotify ID
-            Parameters:
-                - id - a track URIs, URLs or IDs
-        '''
-        id = self._get_id('track', id)
-        return self._get('audio-analysis/'+id)
-
     def followers_contains(self, ownerid, playlistid, userids):
         ''' Gets a list of the artists followed by the current authorized user
 

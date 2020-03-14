@@ -48,6 +48,7 @@ class ConnectDaemon(threading.Thread):
                 except:
                     log_msg("trying AP Port 4070", xbmc.LOGNOTICE)                    
                     self.__spotty_proc = self.__spotty.run_spotty(arguments=spotty_args, disable_discovery=disable_discovery, ap_port="4070")                
+            log_msg("Started Spotify Connect Daemon", xbmc.LOGNOTICE)
             while not self.__exit:
                 line = self.__spotty_proc.stdout.readline()
                 if self.__spotty_proc.returncode and self.__spotty_proc.returncode > 0 and not self.__exit:

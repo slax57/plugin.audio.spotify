@@ -451,6 +451,7 @@ class Spotty(object):
             args = [
                 self.__spotty_binary,
                 "-c", self.__cache_path,
+                "--disable-audio-cache",
 ##                "-b", "320"
                 "--ap-port",ap_port
             ]

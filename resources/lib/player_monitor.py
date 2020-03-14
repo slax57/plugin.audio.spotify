@@ -67,8 +67,8 @@ class ConnectPlayer(xbmc.Player):
             if "nexttrack" in filename:
                 # next track requested for kodi player
                 self.__sp.next_track()
-            elif self.connect_playing:
-                self.update_playlist()
+##            elif self.connect_playing:
+##                self.update_playlist()
 
     def onPlayBackSpeedChanged(self, speed):
         '''Kodi event fired when player is fast forwarding/rewinding'''
@@ -104,7 +104,7 @@ class ConnectPlayer(xbmc.Player):
         
         li = xbmcgui.ListItem('...', path=url)
         self.__playlist.add(url, li)
-        self.__playlist.add(url, li)
+##        self.__playlist.add(url, li)
 
     def start_playback(self, track_id):
         self.__skip_events = True
@@ -121,7 +121,7 @@ class ConnectPlayer(xbmc.Player):
         if self.connect_local:
             self.__sp.seek_track(0)  # for now we always start a track at the beginning
         # give small handicap to connect player to prevent next track race condition
-        xbmc.sleep(100)
+##        xbmc.sleep(300)
         self.play()
 
     def update_info(self, force):
