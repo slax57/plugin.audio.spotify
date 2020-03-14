@@ -60,11 +60,11 @@ class Root:
                 xbmc.executebuiltin("SetProperty(spotify-cmd,__LOGOUT__,Home)")
             if "start" in event:
                 log_msg("playback start requested by connect")
-                xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify/?action=play_connect)")
+                xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
             elif "change" in event:
                 log_msg("playback change requested by connect")
                 # we ignore this as track changes are 
-                #xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify/?action=play_connect)")
+                #xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
             elif "stop" in event:
                 log_msg("playback stop requested by connect")
                 xbmc.executebuiltin("PlayerControl(Stop)")
@@ -219,7 +219,7 @@ class Root:
         if cmd == "start":
             cherrypy.response.headers['Content-Type'] = 'text'
             log_msg("playback start requested by connect")
-            xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify/?action=play_connect)")
+            xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
             return "OK"
         elif cmd == "stop":
             cherrypy.response.headers['Content-Type'] = 'text'

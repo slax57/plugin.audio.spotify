@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    plugin.audio.spotify
+    plugin.audio.spotify-headless
     Spotify Player for Kodi
     main_service.py
     Background service which launches the spotty binary and monitors the player

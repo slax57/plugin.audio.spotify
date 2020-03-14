@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-    plugin.audio.spotify
-    Unofficial Spotify client for Kodi
+    plugin.audio.spotify-headless
+    Unofficial Spotify client for Kodi - Headless player only
 '''
 
 import os, sys

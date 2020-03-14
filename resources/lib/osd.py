@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    plugin.audio.spotify
+    plugin.audio.spotify-headless
     osd.py
     Special window to display an OSD for remote control of Connect player
 '''
@@ -200,7 +200,7 @@ class SpotifyOSDUpdateThread(threading.Thread):
 
         # get additional artwork
         artwork = self.dialog.metadatautils.get_music_artwork(artist, album, title)
-        fanart = artwork["art"].get("fanart", "special://home/addons/plugin.audio.spotify/fanart.jpg")
+        fanart = artwork["art"].get("fanart", "special://home/addons/plugin.audio.spotify-headless/fanart.jpg")
         self.dialog.getControl(3300).setImage(fanart)
         efa = artwork["art"].get("extrafanart", "")
         self.dialog.getControl(3301).setLabel(efa)

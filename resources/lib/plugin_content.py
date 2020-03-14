@@ -308,7 +308,7 @@ class PluginContent():
                     playlsit = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
                     playlsit.clear()
                     playlsit.add(url, li)
-                    next_url = "plugin://plugin.audio.spotify/?action=next_track"
+                    next_url = "plugin://plugin.audio.spotify-headless/?action=next_track"
                     next_li = xbmcgui.ListItem("...", path=next_url)
                     playlsit.add(next_url, next_li)
                     xbmc.Player().play()
@@ -336,27 +336,27 @@ class PluginContent():
         items = []
         items.append(
             (self.addon.getLocalizedString(11013),
-             "plugin://plugin.audio.spotify/?action=browse_main_library",
+             "plugin://plugin.audio.spotify-headless/?action=browse_main_library",
              "DefaultMusicCompilations.png", True))
         items.append(
             (self.addon.getLocalizedString(11014),
-             "plugin://plugin.audio.spotify/?action=browse_main_explore",
+             "plugin://plugin.audio.spotify-headless/?action=browse_main_explore",
              "DefaultMusicGenres.png", True))
         items.append(
-            (xbmc.getLocalizedString(137),
-             "plugin://plugin.audio.spotify/?action=search",
+            (xbmc.getLocalizedString(137), # search
+             "plugin://plugin.audio.spotify-headless/?action=search",
              "DefaultMusicSearch.png", True))
         items.append(
             ("%s: %s" % (self.addon.getLocalizedString(11039), self.playername),
-             "plugin://plugin.audio.spotify/?action=browse_playback_devices",
+             "plugin://plugin.audio.spotify-headless/?action=browse_playback_devices",
              "DefaultMusicPlugins.png", True))
         cur_user_label = self.sp.me()["display_name"]
         if not cur_user_label:
             cur_user_label = self.sp.me()["id"]
-        label = "%s: %s" % (self.addon.getLocalizedString(11047), cur_user_label)
+        label = "%s: %s" % (self.addon.getLocalizedString(11047), cur_user_label) # Static string
         items.append(
             (label,
-             "plugin://plugin.audio.spotify/?action=switch_user",
+             "plugin://plugin.audio.spotify-headless/?action=switch_user",
              "DefaultActor.png", False))
         for item in items:
             li = xbmcgui.ListItem(
@@ -365,7 +365,7 @@ class PluginContent():
                 iconImage=item[2]
             )
             li.setProperty('IsPlayable', 'false')
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=item[1], listitem=li, isFolder=item[3])
         xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
@@ -410,10 +410,10 @@ class PluginContent():
             label = self.addon.getLocalizedString(11037)
             if self.local_playback:
                 label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify/?action=set_playback_device&deviceid=local"
+            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=local"
             li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
             li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
         else:
@@ -421,10 +421,10 @@ class PluginContent():
             label = self.addon.getLocalizedString(11060)
             if self.addon.getSetting("playback_device") == "remote":
                 label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify/?action=set_playback_device&deviceid=remote"
+            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=remote"
             li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
             li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
         # connect devices
@@ -433,10 +433,10 @@ class PluginContent():
             if device["is_active"] and self.addon.getSetting("playback_device") == "connect":
                 label += " [%s]" % self.addon.getLocalizedString(11040)
                 self.refresh_connected_device()
-            url = "plugin://plugin.audio.spotify/?action=set_playback_device&deviceid=%s" % device["id"]
+            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=%s" % device["id"]
             li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
             li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
         if xbmc.getCondVisibility("System.HasAddon(plugin.audio.squeezebox)"):
@@ -444,10 +444,10 @@ class PluginContent():
             label = xbmc.getInfoLabel("System.AddonTitle(plugin.audio.squeezebox)")
             if self.addon.getSetting("playback_device") == "squeezebox":
                 label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify/?action=set_playback_device&deviceid=squeezebox"
+            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=squeezebox"
             li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
             li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
         xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
@@ -490,28 +490,28 @@ class PluginContent():
         items = []
         items.append(
             (xbmc.getLocalizedString(136),
-             "plugin://plugin.audio.spotify/?action=browse_playlists&ownerid=%s" %
+             "plugin://plugin.audio.spotify-headless/?action=browse_playlists&ownerid=%s" %
              (self.userid),
                 "DefaultMusicPlaylists.png"))
         items.append(
             (xbmc.getLocalizedString(132),
-             "plugin://plugin.audio.spotify/?action=browse_savedalbums",
+             "plugin://plugin.audio.spotify-headless/?action=browse_savedalbums",
              "DefaultMusicAlbums.png"))
         items.append(
             (xbmc.getLocalizedString(134),
-             "plugin://plugin.audio.spotify/?action=browse_savedtracks",
+             "plugin://plugin.audio.spotify-headless/?action=browse_savedtracks",
              "DefaultMusicSongs.png"))
         items.append(
             (xbmc.getLocalizedString(133),
-             "plugin://plugin.audio.spotify/?action=browse_savedartists",
+             "plugin://plugin.audio.spotify-headless/?action=browse_savedartists",
              "DefaultMusicArtists.png"))
         items.append(
             (self.addon.getLocalizedString(11023),
-             "plugin://plugin.audio.spotify/?action=browse_topartists",
+             "plugin://plugin.audio.spotify-headless/?action=browse_topartists",
              "DefaultMusicArtists.png"))
         items.append(
             (self.addon.getLocalizedString(11024),
-             "plugin://plugin.audio.spotify/?action=browse_toptracks",
+             "plugin://plugin.audio.spotify-headless/?action=browse_toptracks",
              "DefaultMusicSongs.png"))
         for item in items:
             li = xbmcgui.ListItem(
@@ -521,7 +521,7 @@ class PluginContent():
             )
             li.setProperty('do_not_analyze', 'true')
             li.setProperty('IsPlayable', 'false')
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=item[1], listitem=li, isFolder=True)
         xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
@@ -580,7 +580,7 @@ class PluginContent():
                 break
             items.append(
                 (item["name"],
-                 "plugin://plugin.audio.spotify/?action=browse_category&applyfilter=%s" %
+                 "plugin://plugin.audio.spotify-headless/?action=browse_category&applyfilter=%s" %
                  (item["id"]),
                     thumb))
         return items
@@ -592,11 +592,11 @@ class PluginContent():
         items = []
         items.append(
             (self.addon.getLocalizedString(11015),
-             "plugin://plugin.audio.spotify/?action=browse_playlists&applyfilter=featured",
+             "plugin://plugin.audio.spotify-headless/?action=browse_playlists&applyfilter=featured",
              "DefaultMusicPlaylists.png"))
         items.append(
             (self.addon.getLocalizedString(11016),
-             "plugin://plugin.audio.spotify/?action=browse_newreleases",
+             "plugin://plugin.audio.spotify-headless/?action=browse_newreleases",
              "DefaultMusicAlbums.png"))
 
         # add categories
@@ -610,7 +610,7 @@ class PluginContent():
             )
             li.setProperty('do_not_analyze', 'true')
             li.setProperty('IsPlayable', 'false')
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg"})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
             li.addContextMenuItems([], True)
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=item[1], listitem=li, isFolder=True)
         xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
@@ -976,60 +976,60 @@ class PluginContent():
             if track["id"] in savedtracks:
                 contextitems.append(
                     (self.addon.getLocalizedString(11008),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=remove_track&trackid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=remove_track&trackid=%s)" %
                      (real_trackid)))
             else:
                 contextitems.append(
                     (self.addon.getLocalizedString(11007),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=save_track&trackid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=save_track&trackid=%s)" %
                      (real_trackid)))
 
             if self.local_playback:
                 contextitems.append(
                     (self.addon.getLocalizedString(11035),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=play_track_radio&trackid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_track_radio&trackid=%s)" %
                      (real_trackid)))
 
             if playlistdetails and playlistdetails["owner"]["id"] == self.userid:
                 contextitems.append(
                     ("%s %s" %(self.addon.getLocalizedString(11017), playlistdetails["name"]),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=remove_track_from_playlist&trackid=%s&playlistid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=remove_track_from_playlist&trackid=%s&playlistid=%s)" %
                      (real_trackuri,
                       playlistdetails["id"])))
 
             contextitems.append(
                 (xbmc.getLocalizedString(526),
-                 "RunPlugin(plugin://plugin.audio.spotify/?action=add_track_to_playlist&trackid=%s)" %
+                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=add_track_to_playlist&trackid=%s)" %
                  real_trackuri))
 
             contextitems.append(
                 (self.addon.getLocalizedString(11011),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=artist_toptracks&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=artist_toptracks&artistid=%s)" %
                  track["artistid"]))
             contextitems.append(
                 (self.addon.getLocalizedString(11012),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=related_artists&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=related_artists&artistid=%s)" %
                  track["artistid"]))
             contextitems.append(
                 (self.addon.getLocalizedString(11018),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=browse_artistalbums&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=browse_artistalbums&artistid=%s)" %
                  track["artistid"]))
 
             if track["artistid"] in followedartists:
                 # unfollow artist
                 contextitems.append(
                     (self.addon.getLocalizedString(11026),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=unfollow_artist&artistid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=unfollow_artist&artistid=%s)" %
                      track["artistid"]))
             else:
                 # follow artist
                 contextitems.append(
                     (self.addon.getLocalizedString(11025),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=follow_artist&artistid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=follow_artist&artistid=%s)" %
                      track["artistid"]))
 
             contextitems.append((self.addon.getLocalizedString(11027),
-                                 "RunPlugin(plugin://plugin.audio.spotify/?action=refresh_listing)"))
+                                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=refresh_listing)"))
             track["contextitems"] = contextitems
             newtracks.append(track)
 
@@ -1061,13 +1061,13 @@ class PluginContent():
                 # connect controlled playback
                 li.setProperty("isPlayable", "false")
                 if self.playlistid:
-                    url = "plugin://plugin.audio.spotify/?action=connect_playback&trackid=%s&playlistid=%s&ownerid=%s&offset=%s" % (
+                    url = "plugin://plugin.audio.spotify-headless/?action=connect_playback&trackid=%s&playlistid=%s&ownerid=%s&offset=%s" % (
                         track['id'], self.playlistid, self.ownerid, count)
                 elif self.albumid:
-                    url = "plugin://plugin.audio.spotify/?action=connect_playback&trackid=%s&albumid=%s&offset=%s" % (track[
+                    url = "plugin://plugin.audio.spotify-headless/?action=connect_playback&trackid=%s&albumid=%s&offset=%s" % (track[
                                                                                                                       'id'], self.albumid, count)
                 else:
-                    url = "plugin://plugin.audio.spotify/?action=connect_playback&trackid=%s" % (track['id'])
+                    url = "plugin://plugin.audio.spotify-headless/?action=connect_playback&trackid=%s" % (track['id'])
 
             if self.append_artist_to_title:
                 title = label
@@ -1125,33 +1125,33 @@ class PluginContent():
             # play
             contextitems.append(
                 (xbmc.getLocalizedString(208),
-                 "RunPlugin(plugin://plugin.audio.spotify/?action=connect_playback&albumid=%s)" %
+                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=connect_playback&albumid=%s)" %
                  (item["id"])))
             contextitems.append((xbmc.getLocalizedString(1024), "RunPlugin(%s)" % item["url"]))
             if item["id"] in savedalbums:
                 contextitems.append(
                     (self.addon.getLocalizedString(11008),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=remove_album&albumid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=remove_album&albumid=%s)" %
                      (item['id'])))
             else:
                 contextitems.append(
                     (self.addon.getLocalizedString(11007),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=save_album&albumid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=save_album&albumid=%s)" %
                      (item['id'])))
             contextitems.append(
                 (self.addon.getLocalizedString(11011),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=artist_toptracks&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=artist_toptracks&artistid=%s)" %
                  item["artistid"]))
             contextitems.append(
                 (self.addon.getLocalizedString(11012),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=related_artists&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=related_artists&artistid=%s)" %
                  item["artistid"]))
             contextitems.append(
                 (self.addon.getLocalizedString(11018),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=browse_artistalbums&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=browse_artistalbums&artistid=%s)" %
                  item["artistid"]))
             contextitems.append((self.addon.getLocalizedString(11027),
-                                 "RunPlugin(plugin://plugin.audio.spotify/?action=refresh_listing)"))
+                                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=refresh_listing)"))
             item["contextitems"] = contextitems
         return albums
 
@@ -1211,28 +1211,28 @@ class PluginContent():
             # play
             contextitems.append(
                 (xbmc.getLocalizedString(208),
-                 "RunPlugin(plugin://plugin.audio.spotify/?action=connect_playback&artistid=%s)" %
+                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=connect_playback&artistid=%s)" %
                  (item["id"])))
             contextitems.append((xbmc.getLocalizedString(132), "Container.Update(%s)" % item["url"]))
             contextitems.append(
                 (self.addon.getLocalizedString(11011),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=artist_toptracks&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=artist_toptracks&artistid=%s)" %
                  (item['id'])))
             contextitems.append(
                 (self.addon.getLocalizedString(11012),
-                 "Container.Update(plugin://plugin.audio.spotify/?action=related_artists&artistid=%s)" %
+                 "Container.Update(plugin://plugin.audio.spotify-headless/?action=related_artists&artistid=%s)" %
                  (item['id'])))
             if isFollowed or item["id"] in followedartists:
                 # unfollow artist
                 contextitems.append(
                     (self.addon.getLocalizedString(11026),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=unfollow_artist&artistid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=unfollow_artist&artistid=%s)" %
                      item['id']))
             else:
                 # follow artist
                 contextitems.append(
                     (self.addon.getLocalizedString(11025),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=follow_artist&artistid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=follow_artist&artistid=%s)" %
                      item['id']))
             item["contextitems"] = contextitems
         return artists
@@ -1280,25 +1280,25 @@ class PluginContent():
             # play
             contextitems.append(
                 (xbmc.getLocalizedString(208),
-                 "RunPlugin(plugin://plugin.audio.spotify/?action=play_playlist&playlistid=%s&ownerid=%s)" %
+                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_playlist&playlistid=%s&ownerid=%s)" %
                  (item["id"], item['owner']['id'])))
             if item['owner']['id'] != self.userid and item['id'] in followed_playlists:
                 # unfollow playlist
                 contextitems.append(
                     (self.addon.getLocalizedString(11010),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=unfollow_playlist&playlistid=%s&ownerid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=unfollow_playlist&playlistid=%s&ownerid=%s)" %
                      (item['id'],
                       item['owner']['id'])))
             elif item['owner']['id'] != self.userid:
                 # follow playlist
                 contextitems.append(
                     (self.addon.getLocalizedString(11009),
-                     "RunPlugin(plugin://plugin.audio.spotify/?action=follow_playlist&playlistid=%s&ownerid=%s)" %
+                     "RunPlugin(plugin://plugin.audio.spotify-headless/?action=follow_playlist&playlistid=%s&ownerid=%s)" %
                      (item['id'],
                       item['owner']['id'])))
 
             contextitems.append((self.addon.getLocalizedString(11027),
-                                 "RunPlugin(plugin://plugin.audio.spotify/?action=refresh_listing)"))
+                                 "RunPlugin(plugin://plugin.audio.spotify-headless/?action=refresh_listing)"))
             item["contextitems"] = contextitems
             playlists2.append(item)
         return playlists2
@@ -1315,7 +1315,7 @@ class PluginContent():
             li.setProperty('IsPlayable', 'false')
 
             li.addContextMenuItems(item["contextitems"], True)
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify/fanart.jpg", "thumb": item['thumb']})
+            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg", "thumb": item['thumb']})
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=item["url"], listitem=li, isFolder=True)
 
     def browse_artistalbums(self):
@@ -1588,25 +1588,25 @@ class PluginContent():
                 ("%s (%s)" %
                  (xbmc.getLocalizedString(133),
                   result["artists"]["total"]),
-                    "plugin://plugin.audio.spotify/?action=search_artists&artistid=%s" %
+                    "plugin://plugin.audio.spotify-headless/?action=search_artists&artistid=%s" %
                     (value)))
             items.append(
                 ("%s (%s)" %
                  (xbmc.getLocalizedString(136),
                   result["playlists"]["total"]),
-                    "plugin://plugin.audio.spotify/?action=search_playlists&playlistid=%s" %
+                    "plugin://plugin.audio.spotify-headless/?action=search_playlists&playlistid=%s" %
                     (value)))
             items.append(
                 ("%s (%s)" %
                  (xbmc.getLocalizedString(132),
                   result["albums"]["total"]),
-                    "plugin://plugin.audio.spotify/?action=search_albums&albumid=%s" %
+                    "plugin://plugin.audio.spotify-headless/?action=search_albums&albumid=%s" %
                     (value)))
             items.append(
                 ("%s (%s)" %
                  (xbmc.getLocalizedString(134),
                   result["tracks"]["total"]),
-                    "plugin://plugin.audio.spotify/?action=search_tracks&trackid=%s" %
+                    "plugin://plugin.audio.spotify-headless/?action=search_tracks&trackid=%s" %
                     (value)))
             for item in items:
                 li = xbmcgui.ListItem(
@@ -1625,7 +1625,7 @@ class PluginContent():
         params = self.params
         if listtotal > self.offset + self.limit:
             params["offset"] = self.offset + self.limit
-            url = "plugin://plugin.audio.spotify/"
+            url = "plugin://plugin.audio.spotify-headless/"
             for key, value in params.iteritems():
                 if key == "action":
                     url += "?%s=%s" % (key, value[0])

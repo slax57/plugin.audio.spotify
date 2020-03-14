@@ -100,7 +100,7 @@ class ConnectPlayer(xbmc.Player):
         if self.connect_local:
             url = "http://localhost:%s/nexttrack" % PROXY_PORT
         else:
-            url = "plugin://plugin.audio.spotify/?action=next_track"
+            url = "plugin://plugin.audio.spotify-headless/?action=next_track"
         
         li = xbmcgui.ListItem('...', path=url)
         self.__playlist.add(url, li)

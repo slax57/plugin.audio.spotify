@@ -1,7 +1,7 @@
 ﻿# Kodi Media Center language file
 # Addon Name: Spotify
-# Addon id: plugin.audio.spotify
-# Addon Provider: marcelveldt
+# Addon id: plugin.audio.spotify-headless
+# Addon Provider: slax57
 msgid ""
 msgstr ""
 "Project-Id-Version: Kodi-Addons\n"

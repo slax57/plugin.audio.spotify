@@ -40,7 +40,7 @@ except ImportError:
     from StringIO import StringIO
 
 
-ADDON_ID = "plugin.audio.spotify"
+ADDON_ID = "plugin.audio.spotify-headless"
 KODI_VERSION = int(xbmc.getInfoLabel("System.BuildVersion").split(".")[0])
 KODILANGUAGE = xbmc.getLanguage(xbmc.ISO_639_1)
 requests.packages.urllib3.disable_warnings()  # disable ssl warnings

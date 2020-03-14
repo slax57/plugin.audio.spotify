@@ -7,8 +7,9 @@
             <description>fanart image</description>
             <aspectratio>scale</aspectratio>
             <fadetime>500</fadetime>
-            <texture>special://home/addons/plugin.audio.spotify/fanart.jpg</texture>
+            <texture>special://home/addons/plugin.audio.spotify-headless/fanart.jpg</texture>
         </control>
+
         <control type="label" id="3301">
             <description>hidden label which contains the extrafanart path if exists</description>
             <visible>false</visible>
@@ -21,6 +22,7 @@
             <imagepath background="true">$INFO[Control.GetLabel(3301)]</imagepath>
             <visible>!String.IsEmpty(Control.GetLabel(3301))</visible>
         </control>
+
         <control type="image" id="3303">
             <description>clearlogo image (if existing)</description>
             <aspectratio>keep</aspectratio>
@@ -30,6 +32,7 @@
             <description>banner image (if existing)</description>
             <visible>false</visible>
         </control>
+
         <control type="image" id="3305">
             <description>albumthumb image provided by skinhelper (if existing)</description>
             <visible>false</visible>
@@ -43,8 +46,9 @@
             <description>OSD infopanel with track info</description>
             <bottom>0</bottom>
             <height>120</height>
+
             <control type="image">
-                <description>Background panel</description>
+                <description>Background panel (or stop button?)</description>
                 <texture border="5">panel.png</texture>
                 <animation effect="fade" reversible="false" end="80" time="0" condition="true">Conditional</animation>
                 <colordiffuse>FF1b1b1b</colordiffuse>
@@ -61,6 +65,7 @@
                 <textcolor>white</textcolor>
                 <shadowcolor>black</shadowcolor>
             </control>
+
             <control type="label" id="3112">
                 <description>track artist</description>
                 <top>60</top>
@@ -72,6 +77,7 @@
                 <textcolor>white</textcolor>
                 <shadowcolor>black</shadowcolor>
             </control>
+            
             <control type="label" id="3113">
                 <description>track album</description>
                 <visible>false</visible>
@@ -176,7 +182,7 @@
             </control>
             <control type="image" id="3110">
                 <description>Cover image</description>
-                <texture border="5">special://home/addons/plugin.audio.spotify/icon.png</texture>
+                <texture border="5">special://home/addons/plugin.audio.spotify-headless/icon.png</texture>
             </control>
         </control>
         
