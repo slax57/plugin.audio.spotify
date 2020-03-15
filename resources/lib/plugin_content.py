@@ -14,12 +14,14 @@ import xbmcplugin
 import xbmcgui
 import xbmcvfs
 from simplecache import SimpleCache
+from player_monitor import ConnectPlayer
 
 
 class PluginContent():
 
     action = ""
     sp = None
+    connect_player = None
     userid = ""
     usercountry = ""
     offset = 0
@@ -47,6 +49,7 @@ class PluginContent():
             if auth_token:
                 self.parse_params()
                 self.sp = spotipy.Spotify(auth=auth_token)
+                self.connect_player = ConnectPlayer.getInstance(sp=self.sp)
                 self.userid = self.win.getProperty("spotify-username").decode("utf-8")
                 self.usercountry = self.win.getProperty("spotify-country").decode("utf-8")
                 self.local_playback, self.playername, self.connect_id = self.active_playback_device()
@@ -142,27 +145,7 @@ class PluginContent():
 
     def play_connect(self):
         '''start local connect playback - called from webservice when local connect player starts playback'''
-        playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
-        trackdetails = None
-        count = 0
-        while not trackdetails and count < 10:
-            try:
-                cur_playback = self.sp.current_playback()
-                trackdetails = cur_playback["item"]
-            except:
-                count += 1
-                xbmc.sleep(500)
-        if not trackdetails:
-            log_msg("Could not retrieve trackdetails from api, connect playback aborted", xbmc.LOGERROR)
-        else:
-            url, li = parse_spotify_track(trackdetails, silenced=False, is_connect=True)
-            playlist.clear()
-            playlist.add(url, li)
-            playlist.add("http://localhost:%s/nexttrack" % PROXY_PORT)
-            player = xbmc.Player()
-            player.play(playlist)
-            del playlist
-            del player
+        self.connect_player.update_info(True)
 
     def browse_main(self):
         # main listing

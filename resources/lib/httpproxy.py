@@ -63,7 +63,6 @@ class Root:
                 xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
             elif "change" in event:
                 log_msg("playback change requested by connect")
-##                xbmc.executebuiltin("PlayerControl(Stop)")
                 xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
             elif "stop" in event:
                 log_msg("playback stop requested by connect")
