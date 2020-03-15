@@ -1,24 +1,25 @@
-# plugin.audio.spotify-headless
+# Headless Spotify Connect player Add-on for Kodi
 
-TODO
+Based on the **unofficial Spotify plugin for Kodi**: https://github.com/kodi-community-addons/plugin.audio.spotify
 
-<!-- Unofficial spotify plugin for Kodi, (for now) not yet available in the official Kodi repo.
+The main purpose of this fork is to increase performance and stability, by focusing on the only feature I need of this plugin, which is to act as a _Spotify Connect local playback target_.
 
-Based on the opensource Librespot client. Special thanks to mherger for building the special spotty binaries, based on librespot.
-
-
-## Install with repository
-Install the add-on from my Kodi repo:
-https://github.com/kodi-community-addons/repository.marcelveldt/raw/master/repository.marcelveldt/repository.marcelveldt-1.0.1.zip
+**Disclaimer:** I do not have enough spare time to make this projet ready to use for anyone, nor to provide any support of any kind for this plugin. This is just the result of an experiment that I share for whatever purpose it may serve.
 
 
-## Support
-Support is provided on the Kodi forums:
-http://forum.kodi.tv/showthread.php?tid=265356
-Or create issue in Github
+## Installation
+To install the add-on, first install **marcelveldt's repo v1.0.2** (for dependencies):
+https://github.com/kodi-community-addons/repository.marcelveldt/raw/master/repository.marcelveldt/repository.marcelveldt-1.0.2.zip
+
+Then install **this plugin from the ZIP file** provided in the releases section :
+https://github.com/slax57/plugin.audio.spotify/releases
 
 
-## Help needed with maintaining !
-I am very busy currently so I do not have a lot of time to work on this project or watch the forums.
-Be aware that this is a community driven project, so feel free to submit PR's yourself to improve the code and/or help others with support on the forums etc. If you're willing to really participate in the development, please contact me so I can give you write access to the repo. I do my best to maintain the project every once in a while, when I have some spare time left.
-Thanks for understanding! -->
+## Features and limitations
+This project is to be seen as an experiment, and is still very primitive.
+
+You can sign in to your Spotify Account from this plugin's settings page, or by using Spotify Connect directly.
+
+All the playback features seem to work okay, except concerning playback's termination (if you hit Stop or change playback target device).
+
+Also, this doc needs to be improved.
