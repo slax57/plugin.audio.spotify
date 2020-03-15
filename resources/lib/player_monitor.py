@@ -22,6 +22,7 @@ class ConnectPlayer(xbmc.Player):
     __ignore_seek = False
     __sp = None
     __skip_events = False
+    __is_loading_next_track = False
 
     def __init__(self, **kwargs):
         if ConnectPlayer.__instance != None:
@@ -73,10 +74,13 @@ class ConnectPlayer(xbmc.Player):
                     # we started playback with (remote) connect player
                     log_msg("Playback started of Spotify Connect stream")
                     self.connect_playing = True
+                    self.__is_loading_next_track = False
                 if "nexttrack" in filename:
                     # next track requested for kodi player
-                    self.__skip_events = True
-                    self.__sp.next_track()
+                    if not self.__is_loading_next_track:
+                        self.__skip_events = True
+                        self.__is_loading_next_track = True
+                        self.__sp.next_track()
         else:
             self.__skip_events = False
 
@@ -108,46 +112,52 @@ class ConnectPlayer(xbmc.Player):
         url = "http://localhost:%s/nexttrack" % PROXY_PORT
         li = xbmcgui.ListItem('...', path=url)
         self.__playlist.add(url, li)
-##        self.__playlist.add(url, li)
 
     def start_playback(self, track_id):
         self.__skip_events = True
         self.connect_playing = True
+        self.__is_loading_next_track = False
         self.__playlist.clear()
         trackdetails = self.__sp.track(track_id)
         url, li = parse_spotify_track(trackdetails, silenced=False, is_connect=True)
         self.__playlist.add(url, li)
         self.add_nexttrack_to_playlist()
         self.__ignore_seek = True
-        self.__sp.seek_track(0)  # for now we always start a track at the beginning
+##        self.__sp.seek_track(0)  # for now we always start a track at the beginning
         self.play(self.__playlist)
 
-    def update_info(self, force):
-        cur_playback = None
-        count = 0
-        while not cur_playback and count < 10:
-            try:
-                cur_playback = self.__sp.current_playback()
-            except:
-                count += 1
-                xbmc.sleep(500)
+    def update_info(self):
+        log_msg("Called update_info()!")
+    
+    def handle_lms_event(self):
+
+        cur_playback = self.__sp.current_playback()
+
         if not cur_playback:
             log_msg("Could not retrieve trackdetails from api, stopping playback")
             self.__skip_events = True
+            self.connect_playing = False
             self.stop()
         else:
-            if cur_playback["is_playing"] and (not xbmc.getCondVisibility("Player.Paused") or force):
+
+            if cur_playback["is_playing"] and not xbmc.getCondVisibility("Player.Paused"):
                 player_title = None
                 if self.isPlaying():
                     player_title = self.getMusicInfoTag().getTitle().decode("utf-8")
                 trackdetails = cur_playback["item"]
-                if trackdetails is not None and (not player_title or player_title == "nexttrack" or player_title != trackdetails["name"]):
-                    log_msg("Next track requested by Spotify Connect player")
-                    self.start_playback(trackdetails["id"])
+                if trackdetails is not None:
+                    if not player_title or player_title != trackdetails["name"]:
+                        log_msg("Next track requested by Spotify Connect player")
+                        self.start_playback(trackdetails["id"])
+                    if not self.connect_playing:
+                        log_msg("Playback start or resume requested by Spotify Connect player")
+                        self.start_playback(trackdetails["id"])
+
             elif cur_playback["is_playing"] and xbmc.getCondVisibility("Player.Paused"):
                 log_msg("Playback resumed from pause requested by Spotify Connect")
                 self.__skip_events = True
                 self.play()
+
             elif not xbmc.getCondVisibility("Player.Paused"):
                 log_msg("Pause requested by Spotify Connect")
                 self.__skip_events = True

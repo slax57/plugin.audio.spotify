@@ -51,7 +51,7 @@ class MainService:
         self.sp = spotipy.Spotify()
         self.connect_player = ConnectPlayer.getInstance(sp=self.sp)
 
-        self.proxy_runner = ProxyRunner(self.spotty)
+        self.proxy_runner = ProxyRunner(self.spotty, self.connect_player)
         self.proxy_runner.start()
         webport = self.proxy_runner.get_port()
         log_msg('started webproxy at port {0}'.format(webport))
@@ -84,13 +84,9 @@ class MainService:
                 # token needs refreshing !
                 log_msg("token needs to be refreshed")
                 self.renew_token()
-            elif self.connect_player.connect_playing or cmd == "__RECONNECT__":
-                # monitor for remote track changes
-                loop_timer = 2
-                reconnect = cmd == "__RECONNECT__"
-                if reconnect:
-                    self.win.clearProperty("spotify-cmd")
-                self.connect_player.update_info(reconnect)
+            elif cmd == "__RECONNECT__":
+                self.win.clearProperty("spotify-cmd")
+                self.connect_player.update_info()
             else:
                 loop_timer = 5
 

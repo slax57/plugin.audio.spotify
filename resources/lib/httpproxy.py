@@ -18,13 +18,15 @@ import math
 
 class Root:
     spotty = None
+    connect_player = None
     
     spotty_bin = None
     spotty_trackid = None
     spotty_range_l = None
     
-    def __init__(self, spotty):
+    def __init__(self, spotty, connect_player):
         self.__spotty = spotty
+        self.__connect_player = connect_player
 
     def _check_request(self):
         method = cherrypy.request.method.upper()
@@ -60,13 +62,13 @@ class Root:
                 xbmc.executebuiltin("SetProperty(spotify-cmd,__LOGOUT__,Home)")
             if "start" in event:
                 log_msg("playback start requested by connect")
-                xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
+                self.__connect_player.handle_lms_event()
             elif "change" in event:
                 log_msg("playback change requested by connect")
-                xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
+                self.__connect_player.handle_lms_event()
             elif "stop" in event:
                 log_msg("playback stop requested by connect")
-                xbmc.executebuiltin("PlayerControl(Stop)")
+                self.__connect_player.handle_lms_event()
             elif "volume" in event:
                 vol_level = event[2]
                 log_msg("volume change detected on connect player: %s" % vol_level)
@@ -142,6 +144,9 @@ class Root:
         log_msg("start transfer for track %s - range: %s" % (track_id, range_l), \
                 xbmc.LOGDEBUG)
         try:
+            self.spotty_trackid = track_id
+            self.spotty_range_l = range_l
+
             # Initialize some loop vars
             max_buffer_size = 524288
             bytes_written = 0
@@ -155,8 +160,6 @@ class Root:
             # get pcm data from spotty stdout and append to our buffer
             args = ["-n", "temp", "--single-track", track_id]
             self.spotty_bin = self.__spotty.run_spotty(args, use_creds=True)
-            self.spotty_trackid = track_id
-            self.spotty_range_l = range_l
             
             # ignore the first x bytes to match the range request
             if range_l:
@@ -212,26 +215,13 @@ class Root:
             xbmc.executebuiltin("SetProperty(spotify-token-info,%s,Home)" % url)
             log_msg("authkey sent")
             return html
-    
-    @cherrypy.expose
-    def playercmd(self, cmd, **kwargs):
-        if cmd == "start":
-            cherrypy.response.headers['Content-Type'] = 'text'
-            log_msg("playback start requested by connect")
-            xbmc.executebuiltin("RunPlugin(plugin://plugin.audio.spotify-headless/?action=play_connect)")
-            return "OK"
-        elif cmd == "stop":
-            cherrypy.response.headers['Content-Type'] = 'text'
-            log_msg("playback stop requested by connect")
-            xbmc.executebuiltin("PlayerControl(Stop)")
-            return "OK"
 
 class ProxyRunner(threading.Thread):
     __server = None
     __root = None
 
-    def __init__(self, spotty):
-        self.__root = Root(spotty)
+    def __init__(self, spotty, connect_player):
+        self.__root = Root(spotty, connect_player)
         log = cherrypy.log
         log.access_file = ''
         log.error_file = ''

@@ -21,7 +21,6 @@ class PluginContent():
 
     action = ""
     sp = None
-    connect_player = None
     userid = ""
     usercountry = ""
     offset = 0
@@ -49,7 +48,6 @@ class PluginContent():
             if auth_token:
                 self.parse_params()
                 self.sp = spotipy.Spotify(auth=auth_token)
-                self.connect_player = ConnectPlayer.getInstance(sp=self.sp)
                 self.userid = self.win.getProperty("spotify-username").decode("utf-8")
                 self.usercountry = self.win.getProperty("spotify-country").decode("utf-8")
                 self.local_playback, self.playername, self.connect_id = self.active_playback_device()
@@ -105,10 +103,7 @@ class PluginContent():
 
     def switch_user(self):
         '''switch or logout user'''
-        if self.addon.getSetting("multi_account") == "true":
-            return self.switch_user_multi()
-        else:
-            return self.logoff_user()
+        return self.logoff_user()
 
     def logoff_user(self):
         ''' logoff user '''
@@ -124,28 +119,6 @@ class PluginContent():
             self.win.setProperty("spotify-cmd", "__LOGOUT__")
             xbmc.executebuiltin("Container.Refresh")
         del dialog
-
-    def next_track(self):
-        '''special entry which tells the remote connect player to move to the next track'''
-        
-        cur_playlist_position = xbmc.PlayList(xbmc.PLAYLIST_MUSIC).getposition()
-        # prevent unintentional skipping when Kodi track ends before connect player
-        # playlist position will increse only when play next button is pressed
-        if cur_playlist_position > self.last_playlist_position:
-            # move to next track
-            self.sp.next_track()
-            # give time for connect player to update info
-            xbmc.sleep(300)
-            
-        self.last_playlist_position = cur_playlist_position
-        cur_playback = self.sp.current_playback()
-        trackdetails = cur_playback["item"]
-        url, li = parse_spotify_track(trackdetails, silenced=True)
-        xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, li)
-
-    def play_connect(self):
-        '''start local connect playback - called from webservice when local connect player starts playback'''
-        self.connect_player.update_info(True)
 
     def browse_main(self):
         # main listing
