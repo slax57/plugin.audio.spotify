@@ -62,13 +62,13 @@ class Root:
                 xbmc.executebuiltin("SetProperty(spotify-cmd,__LOGOUT__,Home)")
             if "start" in event:
                 log_msg("playback start requested by connect")
-                self.__connect_player.handle_lms_event()
+                self.__connect_player.handle_lms_event_change()
             elif "change" in event:
                 log_msg("playback change requested by connect")
-                self.__connect_player.handle_lms_event()
+                self.__connect_player.handle_lms_event_change()
             elif "stop" in event:
                 log_msg("playback stop requested by connect")
-                self.__connect_player.handle_lms_event()
+                self.__connect_player.handle_lms_event_stop()
             elif "volume" in event:
                 vol_level = event[2]
                 log_msg("volume change detected on connect player: %s" % vol_level)
