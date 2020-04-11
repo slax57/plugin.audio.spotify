@@ -117,7 +117,7 @@ class ConnectPlayer(xbmc.Player):
         self.__playlist.add(url, li)
         self.__add_nexttrack_to_playlist()
         log_msg("Run Spotipy command: seek_track")
-        self.__sp.seek_track(0)  # this is done to sync remote devices with current playback position
+##        self.__sp.seek_track(0)  # this is done to sync remote devices with current playback position
         self.play(self.__playlist)
         if "NEXTTRACK" in self.__lms_event_stack:
             self.__lms_event_stack.remove("NEXTTRACK") # is done loading next track
