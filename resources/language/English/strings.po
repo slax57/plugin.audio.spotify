@@ -283,3 +283,7 @@ msgstr ""
 msgctxt "#11067"
 msgid "Are you sure you want to logoff ?"
 msgstr ""
+
+msgctxt "#11068"
+msgid "Local playback is not supported on your device. Spotify Headless only supports local playback. You might want to try the official Spotify plugin instead."
+msgstr ""

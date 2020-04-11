@@ -96,11 +96,6 @@ class PluginContent():
         # default settings
         self.append_artist_to_title = self.addon.getSetting("appendArtistToTitle") == "true"
 
-    def refresh_connected_device(self):
-        '''set reconnect flag for main_loop'''
-        if self.addon.getSetting("playback_device") == "connect":
-            self.win.setProperty("spotify-cmd", "__RECONNECT__")
-
     def switch_user(self):
         '''switch or logout user'''
         return self.logoff_user()
@@ -124,10 +119,6 @@ class PluginContent():
         # main listing
         xbmcplugin.setContent(self.addon_handle, "files")
         items = []
-        items.append(
-            ("%s: %s" % (self.addon.getLocalizedString(11039), self.playername),
-             "plugin://plugin.audio.spotify-headless/?action=browse_playback_devices",
-             "DefaultMusicPlugins.png", True))
         cur_user_label = self.sp.me()["display_name"]
         if not cur_user_label:
             cur_user_label = self.sp.me()["id"]
@@ -148,117 +139,26 @@ class PluginContent():
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=item[1], listitem=li, isFolder=item[3])
         xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
         xbmcplugin.endOfDirectory(handle=self.addon_handle)
-        self.refresh_connected_device()
-
-    def set_playback_device(self):
-        '''set the active playback device'''
-        deviceid = self.params["deviceid"][0]
-        if deviceid == "local":
-            self.addon.setSetting("playback_device", "local")
-        elif deviceid == "remote":
-            headertxt = self.addon.getLocalizedString(11039)
-            bodytxt = self.addon.getLocalizedString(11061)
-            dialog = xbmcgui.Dialog()
-            dialog.textviewer(headertxt, bodytxt)
-            result = dialog.input(self.addon.getLocalizedString(11062))
-            if result:
-                self.addon.setSetting("playback_device", "remote")
-                self.addon.setSetting("connect_id", result)
-            del dialog
-        elif deviceid == "squeezebox":
-            self.addon.setSetting("playback_device", "squeezebox")
-        else:
-            cur_playback = self.sp.current_playback()
-            self.sp.transfer_playback(deviceid, False)
-            # resume play if connect player was playing berfore transfer_playback
-            if cur_playback and cur_playback["is_playing"]:
-                self.sp.start_playback()
-            self.addon.setSetting("playback_device", "connect")
-            self.addon.setSetting("connect_id", deviceid)
-
-        self.refresh_connected_device()
-        xbmc.executebuiltin("Container.Refresh")
-
-    def browse_playback_devices(self):
-        '''set the active playback device'''
-        xbmcplugin.setContent(self.addon_handle, "files")
-        items = []
-        if self.win.getProperty("spotify.supportsplayback"):
-            # local playback
-            label = self.addon.getLocalizedString(11037)
-            if self.local_playback:
-                label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=local"
-            li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
-            li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
-            li.addContextMenuItems([], True)
-            xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
-        else:
-            # local playback using a remote service
-            label = self.addon.getLocalizedString(11060)
-            if self.addon.getSetting("playback_device") == "remote":
-                label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=remote"
-            li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
-            li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
-            li.addContextMenuItems([], True)
-            xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
-        # connect devices
-        for device in self.sp.devices()["devices"]:
-            label = "Spotify Connect: %s" % device["name"]
-            if device["is_active"] and self.addon.getSetting("playback_device") == "connect":
-                label += " [%s]" % self.addon.getLocalizedString(11040)
-                self.refresh_connected_device()
-            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=%s" % device["id"]
-            li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
-            li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
-            li.addContextMenuItems([], True)
-            xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
-        if xbmc.getCondVisibility("System.HasAddon(plugin.audio.squeezebox)"):
-            # LMS playback
-            label = xbmc.getInfoLabel("System.AddonTitle(plugin.audio.squeezebox)")
-            if self.addon.getSetting("playback_device") == "squeezebox":
-                label += " [%s]" % self.addon.getLocalizedString(11040)
-            url = "plugin://plugin.audio.spotify-headless/?action=set_playback_device&deviceid=squeezebox"
-            li = xbmcgui.ListItem(label, iconImage="DefaultMusicCompilations.png")
-            li.setProperty("isPlayable", "false")
-            li.setArt({"fanart": "special://home/addons/plugin.audio.spotify-headless/fanart.jpg"})
-            li.addContextMenuItems([], True)
-            xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=False)
-        xbmcplugin.addSortMethod(self.addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
-        xbmcplugin.endOfDirectory(handle=self.addon_handle)
 
     def active_playback_device(self):
-        '''determine if we should use local playback or connect playback'''
+        '''always return local playback if supported'''
         playback = self.addon.getSetting("playback_device")
-        connect_id = ""
+        
         if not playback:
-            # set default to local playback if supported
-            if self.win.getProperty("spotify.supportsplayback"):
-                playback = "local"
-            else:
-                playback = "connect"
-            self.addon.setSetting("playback_device", playback)
-        # set device name
-        if playback == "local":
-            is_local = True
-            devicename = self.addon.getLocalizedString(11037)
-        elif playback == "remote":
-            is_local = True
-            connect_id = self.addon.getSetting("connect_id")
-            devicename = self.addon.getLocalizedString(11063) % connect_id
-        elif playback == "squeezebox":
-            is_local = False
-            devicename = xbmc.getInfoLabel("System.AddonTitle(plugin.audio.squeezebox)")
-        else:
-            is_local = False
-            devicename = "Spotify Connect"  # placeholder value
-            for device in self.sp.devices()["devices"]:
-                if device["is_active"]:
-                    devicename = device["name"]
+            # check if local playback if supported
+            if not self.win.getProperty("spotify.supportsplayback"):
+                msg = self.addon.getLocalizedString(11068)
+                dialog = xbmcgui.Dialog()
+                header = self.addon.getAddonInfo("name")
+                dialog.ok(header, msg)
+                del dialog
+
+            self.addon.setSetting("playback_device", "local")
+
+        connect_id = ""
+        is_local = True
+        devicename = self.addon.getLocalizedString(11037)
+        
         return is_local, devicename, connect_id
 
 

@@ -20,7 +20,7 @@ class ConnectPlayer(xbmc.Player):
     __playlist = None
     __sp = None
 
-    __handling_lms_event = False
+    __lms_event_stack = [] # stack of LMS events being handled
 
     def __init__(self, **kwargs):
         if ConnectPlayer.__instance != None:
@@ -44,25 +44,29 @@ class ConnectPlayer(xbmc.Player):
 
     def onPlayBackPaused(self):
         '''Kodi event fired when playback is paused'''
-        if self.connect_playing and not self.__handling_lms_event:
+        log_msg("Kodi event fired: onPlayBackPaused")
+        if "PAUSE" in self.__lms_event_stack:
+            self.__lms_event_stack.remove("PAUSE")
+        elif self.connect_playing:
+            log_msg("Run Spotipy command: pause_playback")
             self.__sp.pause_playback()
-            log_msg("Playback paused")
-        elif self.__handling_lms_event:
-            self.__handling_lms_event = False
 
     def onPlayBackResumed(self):
         '''Kodi event fired when playback is resumed after pause'''
-        if self.connect_playing and not self.__handling_lms_event:
+        log_msg("Kodi event fired: onPlayBackResumed")
+        if "RESUME" in self.__lms_event_stack:
+            self.__lms_event_stack.remove("RESUME")
+        elif self.connect_playing:
+            log_msg("Run Spotipy command: start_playback")
             self.__sp.start_playback()
-            log_msg("Playback resumed")
-        elif self.__handling_lms_event:
-            self.__handling_lms_event = False
 
     def onPlayBackEnded(self):
-        pass
+        '''Kodi event fired when playback is ended, eg. at the end of current track'''
+        log_msg("Kodi event fired: onPlayBackEnded")
 
     def onPlayBackStarted(self):
         '''Kodi event fired when playback is started (including next tracks)'''
+        log_msg("Kodi event fired: onPlayBackStarted")
         filename = ""
         if self.isPlaying():
             filename = self.getPlayingFile()
@@ -72,52 +76,59 @@ class ConnectPlayer(xbmc.Player):
                 # we started playback with (remote) connect player
                 log_msg("Playback started of Spotify Connect stream")
                 self.connect_playing = True
-            if "nexttrack" in filename and not self.__handling_lms_event:
-                # next track requested for kodi player
-                self.__sp.next_track()
-            elif self.__handling_lms_event:
-                self.__handling_lms_event = False
+            elif "nexttrack" in filename:
+                if not "NEXTTRACK" in self.__lms_event_stack:
+                    log_msg("Run Spotipy command: next_track")
+                    self.__sp.next_track()
+                    self.__lms_event_stack.append("NEXTTRACK")
 
     def onPlayBackSpeedChanged(self, speed):
         '''Kodi event fired when player is fast forwarding/rewinding'''
-        pass
+        log_msg("Kodi event fired: onPlayBackSpeedChanged")
 
     def onPlayBackSeek(self, seekTime, seekOffset):
         '''Kodi event fired when the user is seeking'''
+        log_msg("Kodi event fired: onPlayBackSeek")
         if self.connect_playing:
-            log_msg("Kodiplayer seekto: %s" % seekTime)
+            log_msg("Run Spotipy command: seek_track")
             self.__sp.seek_track(seekTime)
 
     def onPlayBackStopped(self):
         '''Kodi event fired when playback is stopped'''
-        # event is called after every track 
-        # check playlist postition to detect if playback is realy stopped
+        log_msg("Kodi event fired: onPlayBackStopped")
         if self.connect_playing:
             self.connect_playing = False
+            log_msg("Run Spotipy command: pause_playback")
             self.__sp.pause_playback()
-            log_msg("Playback stopped")
 
-    def add_nexttrack_to_playlist(self):
+    def __add_nexttrack_to_playlist(self):
         '''Update the playlist: add fake item at the end which allows us to skip'''
         url = "http://localhost:%s/nexttrack" % PROXY_PORT
         li = xbmcgui.ListItem('...', path=url)
         self.__playlist.add(url, li)
 
     def start_new_playback(self, track_id):
+        '''Create the playlist to start playback of a new track'''
+        log_msg("Creating playlist to start playback of a new track")
         self.connect_playing = True
         self.__playlist.clear()
         trackdetails = self.__sp.track(track_id)
         url, li = parse_spotify_track(trackdetails, silenced=False, is_connect=True)
         self.__playlist.add(url, li)
-        self.add_nexttrack_to_playlist()
-        self.__sp.seek_track(0)  # for now we always start a track at the beginning
+        self.__add_nexttrack_to_playlist()
+        log_msg("Run Spotipy command: seek_track")
+        self.__sp.seek_track(0)  # this is done to sync remote devices with current playback position
         self.play(self.__playlist)
+        if "NEXTTRACK" in self.__lms_event_stack:
+            self.__lms_event_stack.remove("NEXTTRACK") # is done loading next track
 
     def update_info(self):
         log_msg("Called update_info()!")
     
     def handle_lms_event_change(self):
-
+        '''Handle LMS event in case of playback start or change'''
+        log_msg("Handling LMS event start or change")
+        log_msg("Run Spotipy command: current_playback")
         cur_playback = self.__sp.current_playback()
 
         if not cur_playback:
@@ -136,16 +147,17 @@ class ConnectPlayer(xbmc.Player):
 
                 if not kodi_player_title or kodi_player_title != trackdetails["name"]:
                     log_msg("New track requested by Spotify Connect player")
-                    self.__handling_lms_event = True
                     self.start_new_playback(trackdetails["id"])
 
                 elif xbmc.getCondVisibility("Player.Paused"):
                     log_msg("Playback resumed from pause requested by Spotify Connect")
-                    self.__handling_lms_event = True
+                    self.__lms_event_stack.append("RESUME")
                     self.pause() # pause() is also used to resume playback
 
     def handle_lms_event_stop(self):
+        '''Handle LMS event in case of playback stop'''
+        log_msg("Handling LMS event stop")
         if not xbmc.getCondVisibility("Player.Paused"):
-            log_msg("Pause requested by Spotify Connect")
-            self.__handling_lms_event = True
+            log_msg("Stop requested by Spotify Connect")
+            self.__lms_event_stack.append("PAUSE")
             self.pause()

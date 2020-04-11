@@ -60,6 +60,7 @@ class Root:
             if spotty_user != cur_user:
                 log_msg("user change detected")
                 xbmc.executebuiltin("SetProperty(spotify-cmd,__LOGOUT__,Home)")
+                
             if "start" in event:
                 log_msg("playback start requested by connect")
                 self.__connect_player.handle_lms_event_change()

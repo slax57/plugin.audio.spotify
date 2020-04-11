@@ -452,7 +452,7 @@ class Spotty(object):
                 self.__spotty_binary,
                 "-c", self.__cache_path,
                 "--disable-audio-cache",
-##                "-b", "320"
+                "-b", "320",
                 "--ap-port",ap_port
             ]
             if use_creds:
@@ -473,6 +473,7 @@ class Spotty(object):
             if os.name == 'nt':
                 startupinfo = subprocess.STARTUPINFO()
                 startupinfo.dwFlags |= subprocess._subprocess.STARTF_USESHOWWINDOW
+            log_msg("Running spotty command: %s" % args, xbmc.LOGDEBUG)
             return subprocess.Popen(args, startupinfo=startupinfo, stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
         except Exception as exc:

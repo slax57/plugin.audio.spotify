@@ -53,7 +53,7 @@ class ConnectDaemon(threading.Thread):
                 line = self.__spotty_proc.stdout.readline()
                 if self.__spotty_proc.returncode and self.__spotty_proc.returncode > 0 and not self.__exit:
                     # daemon crashed ? restart ?
-                    log_msg("spotty stopped!", xbmc.LOGNOTICE)
+                    log_msg("spotty stopped!", xbmc.LOGWARNING)
                     break
                 xbmc.sleep(100)
             self.daemon_active = False
