@@ -49,12 +49,15 @@ class MainService:
         # the auth key for spotipy will be set afterwards
         # the webserver is also used for the authentication callbacks from spotify api
         self.sp = spotipy.Spotify()
-        self.connect_player = ConnectPlayer.getInstance(sp=self.sp)
+        self.connect_player = ConnectPlayer(sp=self.sp)
 
         self.proxy_runner = ProxyRunner(self.spotty, self.connect_player)
         self.proxy_runner.start()
         webport = self.proxy_runner.get_port()
         log_msg('started webproxy at port {0}'.format(webport))
+
+        # kill all pre-existing spotty instances
+        kill_spotty()
 
         # authenticate at startup
         self.renew_token()

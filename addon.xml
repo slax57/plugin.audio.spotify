@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.audio.spotify-headless" version="0.1.1" name="Spotify Headless" provider-name="slax57">
+<addon id="plugin.audio.spotify-headless" version="0.2.0" name="Spotify Light" provider-name="slax57">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="xbmc.addon" version="12.0.0"/>
@@ -15,8 +15,8 @@
 	<extension library="service.py" point="xbmc.service" start="login" />
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary>Unofficial Spotify music plugin for Kodi - Headless player only</summary>
-        <description>Requires a Spotify premium account.</description>
-        <disclaimer>This product uses SPOTIFY(R) CORE but is not endorsed, certified or otherwise approved in any way by Spotify. Spotify is the registered trade mark of the Spotify Group.</disclaimer>
+        <summary>Unofficial Spotify music plugin for Kodi - Light version</summary>
+        <description>Unofficial Spotify music plugin for Kodi. Based on the Spotify plugin by marcelveldt. This version focuses on local playback abilities, and aims at improving stability while used as a Spotify Connect target. It also provides some advanced features for compatibility with slower devices.</description>
+        <disclaimer>Requires a Spotify premium account. This product uses SPOTIFY(R) CORE but is not endorsed, certified or otherwise approved in any way by Spotify. Spotify is the registered trade mark of the Spotify Group.</disclaimer>
     </extension>
 </addon>

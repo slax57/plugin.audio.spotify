@@ -1,8 +1,12 @@
-# Headless Spotify Connect player Add-on for Kodi
+# Unofficial Spotify music plugin for Kodi - Light version
 
 Based on the **unofficial Spotify plugin for Kodi**: https://github.com/kodi-community-addons/plugin.audio.spotify
 
-The main purpose of this fork is to increase performance and stability, by focusing on the only feature I need of this plugin, which is to act as a _Spotify Connect local playback target_.
+The main purpose of this fork is to increase performance and stability, for use on slower devices like a Raspi or a Steamlink. It focuses on the following features only:
+
+- Local playback
+- Ability to act as a _Spotify Connect_ target
+- Performance tweaks
 
 **Disclaimer:** I do not have enough spare time to make this projet ready to use for anyone, nor to provide any support of any kind for this plugin. This is just the result of an experiment that I share for whatever purpose it may serve.
 
@@ -16,10 +20,6 @@ https://github.com/slax57/plugin.audio.spotify/releases
 
 
 ## Features and limitations
-This project is to be seen as an experiment, and is still very primitive.
-
-You can sign in to your Spotify Account from this plugin's settings page, or by using Spotify Connect directly.
-
-All the playback features seem to work okay, except concerning playback's termination (if you hit Stop or change playback target device).
+This project is to be seen as an experiment. It is still very primitive, and may contain bugs.
 
 Also, this doc needs to be improved.
