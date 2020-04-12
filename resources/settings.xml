@@ -14,5 +14,14 @@
     <category label="11055">
         <setting id="appendArtistToTitle" type="bool" label="11030" default="false"/>
 	</category>
+
+    <category label="11069">
+        <setting id="enable_memory_cache" type="bool" label="11070" default="true"/>
+        <setting type="lsep" label="11071" />
+        <setting type="sep" />
+        <setting id="precache_user_library" type="bool" label="11072" default="true"/>
+        <setting type="lsep" label="11073" />
+        <setting type="sep" />
+    </category>
     
 </settings>

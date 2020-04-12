@@ -287,3 +287,23 @@ msgstr ""
 msgctxt "#11068"
 msgid "Local playback is not supported on your device. Spotify Headless only supports local playback. You might want to try the official Spotify plugin instead."
 msgstr ""
+
+msgctxt "#11069"
+msgid "Advanced"
+msgstr ""
+
+msgctxt "#11070"
+msgid "Enable memory cache"
+msgstr ""
+
+msgctxt "#11071"
+msgid "Disable this feature on devices with limited memory"
+msgstr ""
+
+msgctxt "#11072"
+msgid "Precache user library"
+msgstr ""
+
+msgctxt "#11073"
+msgid "Disable this feature on slower devices"
+msgstr ""

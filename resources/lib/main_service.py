@@ -56,6 +56,9 @@ class MainService:
         webport = self.proxy_runner.get_port()
         log_msg('started webproxy at port {0}'.format(webport))
 
+        # kill all pre-existing spotty instances
+        kill_spotty()
+
         # authenticate at startup
         self.renew_token()
 

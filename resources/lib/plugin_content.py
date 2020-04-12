@@ -42,7 +42,7 @@ class PluginContent():
         try:
             self.addon = xbmcaddon.Addon(id=ADDON_ID)
             self.win = xbmcgui.Window(10000)
-            self.cache = SimpleCache()
+            self.__init_cache()
             auth_token = self.get_authkey()
             if auth_token:
                 self.parse_params()
@@ -61,6 +61,11 @@ class PluginContent():
         except Exception as exc:
             log_exception(__name__, exc)
             xbmcplugin.endOfDirectory(handle=self.addon_handle)
+    
+    def __init_cache(self):
+        self.cache = SimpleCache()
+        if not self.addon.getSetting("enable_memory_cache") == "true":
+            self.cache.enable_mem_cache = False
 
     def get_authkey(self):
         '''get authentication key'''
@@ -1365,23 +1370,26 @@ class PluginContent():
             xbmcplugin.addDirectoryItem(handle=self.addon_handle, url=url, listitem=li, isFolder=True)
 
     def precache_library(self):
-        if not self.win.getProperty("Spotify.PreCachedItems"):
-            monitor = xbmc.Monitor()
-            self.win.setProperty("Spotify.PreCachedItems", "busy")
-            userplaylists = self.get_user_playlists(self.userid)
-            for playlist in userplaylists:
-                self.get_playlist_details(playlist['owner']['id'], playlist["id"])
+        if self.addon.getSetting("precache_user_library") == "true":
+            if not self.win.getProperty("Spotify.PreCachedItems"):
+                log_msg("Library precache started")
+                monitor = xbmc.Monitor()
+                self.win.setProperty("Spotify.PreCachedItems", "busy")
+                userplaylists = self.get_user_playlists(self.userid)
+                for playlist in userplaylists:
+                    self.get_playlist_details(playlist['owner']['id'], playlist["id"])
+                    if monitor.abortRequested():
+                        return
+                self.get_savedalbums()
                 if monitor.abortRequested():
                     return
-            self.get_savedalbums()
-            if monitor.abortRequested():
-                return
-            self.get_savedartists()
-            if monitor.abortRequested():
-                return
-            self.get_saved_tracks()
-            del monitor
-            self.win.setProperty("Spotify.PreCachedItems", "done")
+                self.get_savedartists()
+                if monitor.abortRequested():
+                    return
+                self.get_saved_tracks()
+                del monitor
+                log_msg("Library precache done")
+                self.win.setProperty("Spotify.PreCachedItems", "done")
 
 
 class SpotifyRadioTrackBuffer(object):
