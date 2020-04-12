@@ -13,30 +13,16 @@ import thread
 class ConnectPlayer(xbmc.Player):
     '''Simulate a Spotify Connect player with the Kodi player'''
 
-    __instance = None
-
     connect_playing = False  # spotify connect is playing
     username = None
     __playlist = None
     __sp = None
-
     __lms_event_stack = [] # stack of LMS events being handled
 
     def __init__(self, **kwargs):
-        if ConnectPlayer.__instance != None:
-            raise Exception("This class is a singleton!")
-        else:
-            self.__sp = kwargs.get("sp")
-            self.__playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
-            xbmc.Player.__init__(self, **kwargs)
-            ConnectPlayer.__instance = self
-
-    @staticmethod 
-    def getInstance(**kwargs):
-        """ Static access method. """
-        if ConnectPlayer.__instance == None:
-            ConnectPlayer(**kwargs)
-        return ConnectPlayer.__instance
+        self.__sp = kwargs.get("sp")
+        self.__playlist = xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+        xbmc.Player.__init__(self, **kwargs)
 
     def close(self):
         '''cleanup on exit'''

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.audio.spotify-headless" version="0.1.1" name="Spotify Headless" provider-name="slax57">
+<addon id="plugin.audio.spotify-headless" version="0.2.0" name="Spotify Headless" provider-name="slax57">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
         <import addon="xbmc.addon" version="12.0.0"/>
